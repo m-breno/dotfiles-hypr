@@ -1,8 +1,9 @@
 #!/usr/bin/env sh
+
 HYPRGAMEMODE=$(hyprctl getoption animations:enabled | awk 'NR==2{print $2}')
-if [ "$HYPRGAMEMODE" = 1 ] ; then
-    kill $(pidof waybar)
-    hyprctl --batch "\
+if [ "$HYPRGAMEMODE" = true ]; then
+  kill $(pidof waybar)
+  hyprctl --batch "\
         keyword animations:enabled 0;\
 	keyword decoration:active_opacity 1.0;\
 	keyword decoration:inactive_opacity 1.0;\
@@ -12,6 +13,6 @@ if [ "$HYPRGAMEMODE" = 1 ] ; then
         keyword general:gaps_out 0;\
         keyword general:border_size 1;\
         keyword decoration:rounding 0"
-    exit
+  exit
 fi
 hyprctl reload
