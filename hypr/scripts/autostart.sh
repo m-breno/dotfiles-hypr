@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 ## Variables
 config="$HOME/.config/hypr"
@@ -12,8 +12,11 @@ start() {
   # Wallpaper
   hyprpaper &
 
-  #Keyboard backlight
-  #$scripts/lightkb
+  # Keyboard backlight
+  "$config/scripts/lightkb.sh"
+
+  # SwayIdle
+  "$config/scripts/idle.sh"
 
   # Other
   dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
@@ -24,7 +27,6 @@ start() {
 
   # Apps
   spotify &
-
 }
 
 # Run at each reload
@@ -34,7 +36,6 @@ restart() {
   pkill waybar
   waybar -c "$comp/waybar/config" -s "$comp/waybar/style.css" &
   waybar -c "$comp/waybar/config-mon2" -s "$comp/waybar/style-mon2.css" &
-
 }
 
 case "$1" in
