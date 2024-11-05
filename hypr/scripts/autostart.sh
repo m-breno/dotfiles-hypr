@@ -2,22 +2,9 @@
 
 ## Variables
 config="$HOME/.config/hypr"
-comp="$config/components"
 
 # Run as hyprland starts
 start() {
-  # Notifications
-  mako -c "$comp/mako/config" &
-
-  # Wallpaper
-  hyprpaper &
-
-  # Keyboard backlight
-  pkexec "$HOME/.local/bin/ledToggler.sh"
-
-  # SwayIdle
-  "$config/scripts/idle.sh"
-
   # Other
   dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
 
@@ -31,11 +18,17 @@ start() {
 
 # Run at each reload
 restart() {
+  # Notifications
+  killall mako
+  mako -c "$comp/mako/config" &
+ 
+  # Wallpaper
+  killall hyprpaper
+  hyprpaper &
 
-  # waybar
-  pkill waybar
-  waybar -c "$comp/waybar/config" -s "$comp/waybar/style.css" &
-  waybar -c "$comp/waybar/config-mon2" -s "$comp/waybar/style-mon2.css" &
+  # Keyboard backlight
+  killall ledToggler.sh
+  pkexec "$HOME/.local/bin/ledToggler.sh"
 }
 
 case "$1" in
