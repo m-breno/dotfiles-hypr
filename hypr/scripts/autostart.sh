@@ -13,7 +13,7 @@ start() {
   hyprpaper &
 
   # Keyboard backlight
-  "$config/scripts/lightkb.sh"
+  pkexec "$HOME/.local/bin/ledToggler.sh"
 
   # SwayIdle
   "$config/scripts/idle.sh"

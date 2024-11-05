@@ -1,67 +1,64 @@
 #!/usr/bin/env bash
 
-iDIR='/usr/share/icons/Papirus-Dark/24x24/actions/'
+get() {
+  pamixer --get-volume
+}
 
-get_volume() {
-  get="$(pamixer --get-volume)"
-  case "$get" in
-  0) echo "Muted" ;;
-  *) echo "$get" ;;
+get_human() {
+  case "$(pamixer --get-mute)" in
+  "true")
+    echo "Muted"
+    ;;
+  *)
+    echo "$(get)%"
+    ;;
   esac
 }
 
 get_icon() {
-  current="$(get_volume)"
-  if [[ "$current" -eq "0" ]]; then
-    icon="$iDIR/volume-mute.png"
-  elif [[ ("$current" -ge "0") && ("$current" -le "30") ]]; then
-    icon="$iDIR/volume-low.png"
-  elif [[ ("$current" -ge "30") && ("$current" -le "60") ]]; then
-    icon="$iDIR/volume-mid.png"
-  elif [[ ("$current" -ge "60") && ("$current" -le "100") ]]; then
-    icon="$iDIR/volume-high.png"
+  if [[ "$(get_human)" == "Muted" ]]; then
+    name="muted"
+  elif [[ ("$VOL" -ge "0") && ("$VOL" -le "30") ]]; then
+    name="low"
+  elif [[ ("$VOL" -ge "30") && ("$VOL" -le "70") ]]; then
+    name="medium"
+  elif [[ ("$VOL" -ge "70") && ("$VOL" -le "100") ]]; then
+    name="high"
   fi
+
+  icon="/usr/share/icons/Papirus-Dark/24x24/panel/audio-volume-$name.svg"
+  export icon
 }
 
 notify() {
-  get_volume_human() {
-    case "$(get_volume)" in
-    "Muted")
-      echo Muted
-      ;;
-    *)
-      echo $(get_volume)%
-      ;;
-    esac
-
-  }
-  dunstify -u low -h 'string:x-dunst-stack-tag:obvolume' -i "$icon" "Volume: $(get_volume_human)"
+  get_icon
+  dunstify -u low -h "int:value:$(get)" -h 'string:x-dunst-stack-tag:obvolume' -i "$icon" "Volume: $(get_human)"
 }
 
-inc_volume() {
-  [[ $(pamixer --get-mute) == true ]] && pamixer -u
+inc() {
+  [[ $(get_human) == "Muted" ]] && pamixer -u
   pamixer -i 5
-  get_icon
+
   notify
 }
 
-dec_volume() {
-  [[ $(pamixer --get-mute) == true ]] && pamixer -u
+dec() {
+  [[ $(get_human) == "Muted" ]] && pamixer -u
   pamixer -d 5
-  get_icon
+
   notify
 }
 
 mute() {
   pamixer -t
-  get_icon
+
   notify
 }
 
 case "$1" in
--g | --get) get_volume ;;
--i | --inc) inc_volume ;;
--d | --dec) dec_volume ;;
--t | -m | --toggle | --mute) mute ;;
-*) echo $(get_volume) ;;
+get) get ;;
+inc) inc ;;
+dec) dec ;;
+mute) mute ;;
+*) get ;;
 esac

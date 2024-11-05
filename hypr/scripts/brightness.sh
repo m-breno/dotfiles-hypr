@@ -1,73 +1,43 @@
 #!/usr/bin/env bash
 
-## Copyright (C) 2020-2024 Aditya Shakya <adi1090x@gmail.com>
-##
-## Script to manage brightness on Archcraft.
+get() {
+  BNESS=$(brillo -Gq)
+  export BNESS
 
-# Icons
-iDIR='/usr/share/archcraft/icons/dunst'
-
-# Graphics card
-#CARD=`ls /sys/class/backlight | head -n 1`
-
-# Get brightness
-get_backlight() {
-  #if [[ "$CARD" == *"intel_"* ]]; then
-  BNESS=$(xbacklight -get)
-  LIGHT=${BNESS%.*}
-  #else
-  #	LIGHT=$(printf "%.0f\n" `light -G`)
-  #fi
-  echo "${LIGHT}%"
+  echo "${BNESS%.*}%"
 }
 
-# Get icons
 get_icon() {
-  backlight="$(get_backlight)"
-  current="${backlight%%%}"
-  if [[ ("$current" -ge "0") && ("$current" -le "20") ]]; then
-    icon="$iDIR"/brightness-20.png
-  elif [[ ("$current" -ge "20") && ("$current" -le "40") ]]; then
-    icon="$iDIR"/brightness-40.png
-  elif [[ ("$current" -ge "40") && ("$current" -le "60") ]]; then
-    icon="$iDIR"/brightness-60.png
-  elif [[ ("$current" -ge "60") && ("$current" -le "80") ]]; then
-    icon="$iDIR"/brightness-80.png
-  elif [[ ("$current" -ge "80") && ("$current" -le "100") ]]; then
-    icon="$iDIR"/brightness-100.png
+  if [[ ("$BNESS" -ge "0") && ("$BNESS" -le "40") ]]; then
+    name="low"
+  elif [[ ("$BNESS" -ge "40") && ("$BNESS" -le "75") ]]; then
+    name="medium"
+  elif [[ ("$BNESS" -ge "75") && ("$BNESS" -le "100") ]]; then
+    name="high"
   fi
+
+  icon="/usr/share/icons/Papirus-Dark/24x24/panel/brightness-$name-symbolic.svg"
+  export icon
 }
 
-# Notify
-notify_bl() {
-  get_icon && dunstify -u low -h string:x-dunst-stack-tag:obbacklight -i "$icon" "Brightness : $(get_backlight)"
+notify() {
+  get
+  #dunstify -u low -h string:x-dunst-stack-tag:obbacklight -i "$icon" "Brightness: $(get_backlight)"
+  dunstify -u low -h "int:value:$BNESS" -h string:x-dunst-stack-tag:obbacklight -i "$icon" "Brilho: $(get)"
 }
 
-# Increase brightness
-inc_backlight() {
-  #if [[ "$CARD" == *"intel_"* ]]; then
-  xbacklight -inc 5 && notify_bl
-  #else
-  #	light -A 5 && notify_bl
-  #fi
+inc() {
+  brillo -A 5 -q -u 250000
+  notify
 }
 
-# Decrease brightness
-dec_backlight() {
-  #if [[ "$CARD" == *"intel_"* ]]; then
-  xbacklight -dec 5 && notify_bl
-  #else
-  #	light -U 5 && notify_bl
-  #fi
+dec() {
+  brillo -U 5 -q -u 250000
+  notify
 }
 
-# Execute accordingly
-if [[ "$1" == "--get" ]]; then
-  get_backlight
-elif [[ "$1" == "--inc" ]]; then
-  inc_backlight
-elif [[ "$1" == "--dec" ]]; then
-  dec_backlight
-else
-  get_backlight
-fi
+case "$1" in
+inc) inc ;;
+dec) dec ;;
+*) get ;;
+esac
