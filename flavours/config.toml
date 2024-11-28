@@ -11,11 +11,10 @@ file = "~/.config/hypr/colors.conf"
 template = "hyprland"
 rewrite = true
 
-
 [[items]]
-file = "~/.config/waybar/colors.css"
-template = "waybar"
-rewrite = true
+file = "~/.config/mako/config"
+template = "mako"
+rewrite = false
 
 [[items]]
 file = "~/.config/kitty/colors.conf"

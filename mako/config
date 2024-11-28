@@ -1,0 +1,27 @@
+font=Fira Code
+
+default-timeout=10000
+
+border-radius=10
+
+# Start flavours
+## Base16 Bright
+# Author: Chris Kempson (http://chriskempson.com)
+
+background-color=#000000
+text-color=#e0e0e0
+border-color=#6fb3d2
+progress-color=#505050
+
+[urgency=low]
+background-color=#000000
+text-color=#e0e0e0
+border-color=#6fb3d2
+progress-color=#505050
+
+[urgency=high]
+background-color=#000000
+text-color=#fb0120
+border-color=#6fb3d2
+progress-color=#505050
+# End flavours

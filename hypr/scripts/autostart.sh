@@ -6,14 +6,12 @@ config="$HOME/.config/hypr"
 # Run as hyprland starts
 start() {
   # Other
-  dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
+  dbus-update-activation-environment \
+	--systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
 
-  hyprctl setcursor Catppuccin-Mocha-Dark-Cursors 24 &
   wl-clip-persist --clipboard both &
-  /usr/lib/polkit-kde-authentication-agent-1 &
 
-  # Apps
-  spotify &
+  /usr/lib/polkit-kde-authentication-agent-1 &
 }
 
 # Run at each reload
@@ -33,12 +31,10 @@ restart() {
 
 case "$1" in
 -s)
-  start
-  ;;
+  start ;;
 -r)
-  restart
-  ;;
+  restart ;;
 *)
-  printf "Usage: \'-s\' for exec-once and \'-r\' for exec at each reload" && return 1
-  ;;
+  printf "Usage: \'-s\' for exec-once and \'-r\' for exec at each reload" 
+	return 1 ;;
 esac

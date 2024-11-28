@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
 get() {
-  BNESS=$(brillo -Gq)
-  export BNESS
+  BNESS=$(brillo -G)
 
-  echo "${BNESS%.*}%"
+  export BNESS="${BNESS%.*}"
 }
 
 get_icon() {
@@ -22,22 +21,33 @@ get_icon() {
 
 notify() {
   get
+  get_icon
   #dunstify -u low -h string:x-dunst-stack-tag:obbacklight -i "$icon" "Brightness: $(get_backlight)"
-  dunstify -u low -h "int:value:$BNESS" -h string:x-dunst-stack-tag:obbacklight -i "$icon" "Brilho: $(get)"
+  dunstify \
+		-u low \
+		-h "int:value:$BNESS" \
+		-h string:x-dunst-stack-tag:obbacklight \
+		-i "$icon" \
+		"Brilho: $BNESS%"
 }
 
 inc() {
-  brillo -A 5 -q -u 250000
+  brillo -A 5 -u 250000
   notify
 }
 
 dec() {
-  brillo -U 5 -q -u 250000
+  brillo -U 5 -u 250000
   notify
+}
+
+set() {
+  brillo -S $@ -u 250000
 }
 
 case "$1" in
 inc) inc ;;
 dec) dec ;;
+set) set $2 ;;
 *) get ;;
 esac
