@@ -18,7 +18,7 @@ start() {
 restart() {
   # Notifications
   killall mako
-  mako -c "$comp/mako/config" &
+  mako -c "$config/mako/config" &
  
   # Wallpaper
   killall hyprpaper
