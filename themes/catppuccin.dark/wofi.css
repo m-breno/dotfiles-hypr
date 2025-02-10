@@ -48,8 +48,12 @@ window {
   border-bottom-right-radius: 20px;
 }
 
+#img {
+  margin: 3px;
+}
+
 #text {
-  margin: 5px;
+  margin: 3px;
 
   color: #cdd6f4;
 }
